@@ -1,5 +1,4 @@
-import graphqlM, {GraphQLEnumType, GraphQLID, GraphQLString} from 'graphql';
-import FruitEnumType from "../enums/FruitEnum";
+import graphqlM, {GraphQLID, GraphQLString} from 'graphql';
 
 const {
     GraphQLObjectType
