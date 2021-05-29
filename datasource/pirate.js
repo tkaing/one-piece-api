@@ -1,23 +1,13 @@
 const law = {
-    id: 1,
-    name: 'Trafalgar D. Water Law'
+    name: 'Trafalgar D. Water Law',
+    fruit: 0
 };
 
 const luffy = {
-    id: 2,
-    name: 'Monkey D. Luffy'
-};
-
-const chopper = {
-    id: 3,
-    name: 'Tony Tony Chopper'
-};
-
-const barbeNoire = {
-    id: 4,
-    name: 'Marshall D. Teach'
+    name: 'Monkey D. Luffy',
+    fruit: 0
 };
 
 export {
-    law, luffy, chopper, barbeNoire
+    law, luffy
 }

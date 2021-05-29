@@ -2,13 +2,12 @@ import express from 'express';
 import graphqlM from 'graphql';
 import expressGraphQL from 'express-graphql';
 import { createClient } from '@supabase/supabase-js';
-
-import queryType from "./types/query.js";
-import populateDatabase from "./populateDatabase.js";
 import cors from "cors";
+import queryType from "./types/query.js";
+import mutationType from "./types/mutation.js";
+import populateDatabase from "./populateDatabase.js";
 
 const {
-    graphql,
     printSchema,
     GraphQLSchema,
 } = graphqlM;
@@ -25,25 +24,30 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 await populateDatabase(supabase);
 
 // Init Schema
-const schema = new GraphQLSchema({ query: queryType });
+const schema = new GraphQLSchema({ query: queryType, mutation: mutationType });
 console.log('Dumping GraphQL schema :\n');
 console.log(printSchema(schema));
 
 // Build Query
 const query = `{
-    navies {
+    fruits {
+        id
+        name
+        type
+    }
+    piratesWithZoan {
         id
         name
     }
-    pirates {
+    piratesWithLogia {
         id
         name
     }
-    governments {
+    piratesWithoutFruit {
         id
         name
     }
-    crews {
+    piratesWithParamecia {
         id
         name
     }

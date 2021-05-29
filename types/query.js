@@ -1,10 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import graphqlM, { GraphQLList, GraphQLNonNull } from 'graphql';
 
-import crewType from "./crew.js";
-import navyType from "./navy.js";
+import fruitType from "./fruit.js";
 import pirateType from "./pirate.js";
-import governmentType from "./government.js";
 
 const {
     GraphQLObjectType
@@ -15,32 +13,55 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 const queryType = new GraphQLObjectType({
     name: 'Query',
     fields: {
-        crews: {
-            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(crewType))),
-            resolve: () => listByTable('crew')
+        fruits: {
+            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(fruitType))),
+            resolve: () => listOfFruits()
         },
-        navies: {
-            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(navyType))),
-            resolve: () => listByTable('navy')
-        },
-        pirates: {
+        piratesWithZoan: {
             type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(pirateType))),
-            resolve: () => listByTable('pirate')
+            resolve: () => listOfPiratesByFruit(1)
         },
-        governments: {
-            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(governmentType))),
-            resolve: () => listByTable('government')
+        piratesWithLogia: {
+            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(pirateType))),
+            resolve: () => listOfPiratesByFruit(2)
+        },
+        piratesWithoutFruit: {
+            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(pirateType))),
+            resolve: () => listOfPiratesByFruit()
+        },
+        piratesWithParamecia: {
+            type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(pirateType))),
+            resolve: () => listOfPiratesByFruit(3)
         },
     }
 });
 
-const listByTable = async (table) => {
+const listOfFruits = async () => {
     const { data, error } = await supabase
-        .from(table)
+        .from('fruit')
         .select('*');
     if (error)
-        console.error(error);
+        console.log(error);
     return data;
+};
+
+const listOfPiratesByFruit = async (fruitEnumValue = null) => {
+    if (fruitEnumValue === null) {
+        let { data, error } = await supabase
+            .from('pirate')
+            .select('*')
+            .match({ fruit: 0 });
+        return data;
+    }
+    const fruitResponse = await supabase
+        .from('fruit')
+        .select('id')
+        .match({ type: fruitEnumValue });
+    const pirateResponse = await supabase
+        .from('pirate')
+        .select('*')
+        .in('fruit', fruitResponse.data.map(_it => _it.id));
+    return pirateResponse.data;
 };
 
 export default queryType
